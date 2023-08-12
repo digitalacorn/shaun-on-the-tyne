@@ -6,6 +6,7 @@
 	"plugins": ["react-refresh", "eslint-plugin-react-hooks"],
     "globals": {
         "document": true,
+        "window": true
     },
 	"rules": {
 		"react-refresh/only-export-components": "warn"
