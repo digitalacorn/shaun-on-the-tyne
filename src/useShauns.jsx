@@ -26,7 +26,19 @@ export function useShauns() {
     const validClusters = clusters.filter((cluster) => cluster.length > 0);
     const usedShaun = (id) => !unClusteredShauns.map(shaun => shaun.id).includes(id);
 
+    const clusterColour = (clusterNum) => clusterNum < 0 ? "white" : ['#FFFEC4', '#DFCCFB', '#C8E4B2', '#FDCEDF', '#C0DEFF', '#FFE7CC'][clusterNum % 6];
+
+    const shaunsClusterId = (shaunId) => {
+        let id = -1;
+        validClusters.forEach((cluster, index) => {
+            if (cluster.includes(shaunId)) id = index;
+        });
+        return id;
+    }
+
+    const shaunColour = (shaunId) => clusteredShauns.includes(shaunId) ? clusterColour(shaunsClusterId(shaunId)) : 'white';
+
     return {
-        start, setStart, finish, setFinish, clusters, setClusters, resetAll, clusteredShauns, unClusteredShauns, validClusters, usedShaun
+        start, setStart, finish, setFinish, clusters, setClusters, resetAll, clusteredShauns, unClusteredShauns, validClusters, usedShaun, shaunColour, clusterColour
     }
 }

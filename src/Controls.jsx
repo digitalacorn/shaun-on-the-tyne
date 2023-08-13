@@ -1,8 +1,9 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { PropTypes } from "prop-types";
 
-import { FormControl, InputLabel, MenuItem, Select, Typography, Button, IconButton, OutlinedInput, Box, Chip, useTheme } from '@mui/material'
+import { FormControl, InputLabel, MenuItem, Select, Typography, Button, IconButton, OutlinedInput, Box, Chip, useTheme, ButtonGroup } from '@mui/material'
 import { shauns } from './data/shauns';
+import { presets } from './data/presets';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useShauns } from './useShauns';
 
@@ -34,11 +35,11 @@ const MenuProps = {
 };
 
 
-export function Controls({ calculateRoute }) {
+export function Controls({ calculateRoute, hasRoute, clearRoute }) {
 
     const theme = useTheme();
 
-    const { start, setStart, finish, setFinish, clusters, setClusters, resetAll, unClusteredShauns, validClusters, usedShaun } = useShauns();
+    const { start, setStart, finish, setFinish, clusters, setClusters, resetAll, unClusteredShauns, validClusters, usedShaun, shaunColour } = useShauns();
 
 
     const handleStartChange = (event) => {
@@ -47,6 +48,28 @@ export function Controls({ calculateRoute }) {
     const handleFinishChange = (event) => {
         setFinish(event.target.value);
     };
+
+    const [calculating, setCalculating] = useState(false);
+
+    const handleCalculateRoute = () => {
+        (async () => {
+            setCalculating(true);
+            try {
+                await calculateRoute(start, finish, clusters);
+            } catch (err) {
+                console.error(err);
+            }
+            setCalculating(false);
+        })();
+    };
+
+    const handleSelectPreset = (index) => {
+        const preset = presets[index];
+        setStart(preset.data.start);
+        setFinish(preset.data.finish);
+        setClusters(preset.data.clusters.map((cluster) => [...cluster]));
+    };
+
 
     const errors = [];
 
@@ -57,6 +80,16 @@ export function Controls({ calculateRoute }) {
     return (<div style={{ minWidth: "400px", padding: "20px" }}>
         <FormRow>
             <Typography variant="h3">Route Planning</Typography>
+        </FormRow>
+
+        <FormRow>
+            <InputLabel htmlFor="preset">Select Preset</InputLabel>
+            <ButtonGroup
+                id="preset"
+                disabled={calculating} variant="outlined" size="small" aria-label="small button group">
+                {presets.map((preset, index) => (<Button key={index} value={index} onClick={() => handleSelectPreset(index)}>{preset.name}</Button>))}
+            </ButtonGroup>
+
         </FormRow>
 
 
@@ -71,7 +104,7 @@ export function Controls({ calculateRoute }) {
                 <Select
                     labelId="start-select-label"
                     id="start-select"
-                    value={start}
+                    value={start || ''}
                     label="Start"
                     onChange={handleStartChange}
                 >
@@ -87,7 +120,7 @@ export function Controls({ calculateRoute }) {
                 <Select
                     labelId="finish-select-label"
                     id="finish-select"
-                    value={finish}
+                    value={finish || ''}
                     label="Finish"
                     onChange={handleFinishChange}
                 >
@@ -135,7 +168,7 @@ export function Controls({ calculateRoute }) {
                                         {cluster.map((shaunId, clusterPos) => {
                                             const shaun = shauns.find((shaun) => shaunId === shaun.id);
                                             return (
-                                                <Chip key={shaun.id} label={`${shaun.id}`} onDelete={() => {
+                                                <Chip key={shaun.id} label={`${shaun.id}`} sx={{ backgroundColor: shaunColour(shaun.id) }} onDelete={() => {
                                                     removeShaun(clusterPos)
                                                 }} onMouseDown={(event) => {
                                                     event.stopPropagation();
@@ -178,12 +211,11 @@ export function Controls({ calculateRoute }) {
             <div style={{ width: "100%", fontSize: "small", marginBottom: "1rem", color: "red" }}>
                 {errors && errors.map((error, index) => (<span key={index}>{error}</span>))}
             </div>
-            <Button variant="outlined" disabled onClick={() => { }}>Clear Route</Button>&nbsp;
-            <Button variant="contained" disabled={false && Boolean(errors.length)} onClick={() => calculateRoute(start, finish, clusters)}>Calculate Route</Button>
+            {
+                hasRoute ? (<Button variant="outlined" onClick={clearRoute}>Clear Route</Button>)
+                    : (<Button variant="contained" disabled={calculating || Boolean(errors.length)} onClick={handleCalculateRoute}>Calculate Route</Button>)
+            }
         </FormRow>
-
-        <Button onClick={resetAll}>Clear form</Button>&nbsp;
-
 
     </div >
     );
@@ -191,4 +223,6 @@ export function Controls({ calculateRoute }) {
 
 Controls.propTypes = {
     calculateRoute: PropTypes.func,
+    clearRoute: PropTypes.func,
+    hasRoute: PropTypes.bool,
 }

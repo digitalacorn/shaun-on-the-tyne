@@ -14,7 +14,7 @@ const libraries = ['places'];
 function App() {
 
     const [map, setMap] = useState(null);
-    const { start, finish, unClusteredShauns, validClusters } = useShauns();
+    const { start, finish, unClusteredShauns, validClusters, shaunColour, clusterColour } = useShauns();
 
 
     const [isDrawerOpen, setDrawerOpen] = useState(true);
@@ -116,6 +116,10 @@ function App() {
 
     }
 
+    const clearRoute = () => {
+        setDirectionsResponse([]);
+    }
+
     const onLoad = useCallback((map) => setMap(map), []);
 
     useEffect(() => {
@@ -158,7 +162,7 @@ function App() {
                         >
                             Shaun on the Tyne - Running Challenge
                         </Typography>
-                        {distance !== null && (<Typography>{`${(distance * 0.621371).toFixed(1)}miles`}</Typography>)}
+                        {distance !== null && (<Typography variant="h4">{`${(distance * 0.621371).toFixed(1)} miles`}</Typography>)}
                     </Toolbar>
                 </Container>
             </AppBar>
@@ -168,7 +172,7 @@ function App() {
                 onClose={() => setDrawerOpen(false)}
                 onOpen={() => setDrawerOpen(true)}
             >
-                <Controls calculateRoute={calculateRoute} />
+                <Controls calculateRoute={calculateRoute} clearRoute={clearRoute} hasRoute={directionsResponse.length > 0} />
             </SwipeableDrawer>
 
             <Container style={{ padding: "0 0 0 0", maxWidth: 'initial' }}>
@@ -201,7 +205,7 @@ function App() {
                                                 getPixelPositionOffset={() => ({ x: -7, y: 2 })}
 
                                             >
-                                                <div style={{ background: "white", border: '1px solid black' }}>{shaun.id}</div>
+                                                <div style={{ background: shaunColour(shaun.id), border: '1px solid black', padding: '5px' }}>{shaun.id}</div>
                                             </OverlayView>
                                         }
                                     </Marker>
@@ -216,7 +220,7 @@ function App() {
                                 getPixelPositionOffset={() => ({ x: -7, y: 2 })}
 
                             >
-                                <div style={{ background: "yellow", border: '1px solid black' }}>{`Cluster ${index + 1}`}</div>
+                                <div style={{ background: clusterColour(index), border: '1px solid black', padding: '5px' }}>{`Cluster ${index + 1}`}</div>
                             </OverlayView>))
                         }
                         {directionsResponse.length && directionsResponse.map((resp, i) => (<DirectionsRenderer key={i} directions={resp} />))}
