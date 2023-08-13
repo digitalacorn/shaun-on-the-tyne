@@ -10,7 +10,6 @@ import { shauns } from './data/shauns';
 import { clusterCentre, computeTotalDistance, getShaun } from './helpers';
 import { useShauns } from './useShauns';
 
-
 const libraries = ['places'];
 function App() {
 
@@ -19,7 +18,7 @@ function App() {
 
 
     const [isDrawerOpen, setDrawerOpen] = useState(true);
-    const [distance, setDistance] = useState('');
+    const [distance, setDistance] = useState(null);
     // We will be using some state variables to store the response from the google maps api
     const [directionsResponse, setDirectionsResponse] = useState([])
 
@@ -32,6 +31,8 @@ function App() {
 
     // function to calculate Route
     async function calculateRoute() {
+
+        setDirectionsResponse([]);
 
         const startShaun = getShaun(start);
         const finishShaun = getShaun(finish);
@@ -63,10 +64,69 @@ function App() {
 
         const directionsService = new window.google.maps.DirectionsService()
         const results = await directionsService.route(request)
-        setDirectionsResponse([results]);
-        const km = computeTotalDistance(results);
-        setDistance(`${km}km`)
-        const order = results.routes[0].waypoint_order;
+        if (clusterLocations.length === 0) {
+            // we are done
+            setDirectionsResponse([results]);
+            setDistance(computeTotalDistance(results))
+        } else {
+            // need to perform routing on each cluster and combine
+            const order = results.routes[0].waypoint_order;
+            let beforeLocation = getShaun(start).location;
+            const fullRouteLocations = [beforeLocation];
+
+            for (let index = 0; index < order.length; index++) {
+                const waypointId = order[index];
+                const afterLocation = waypointId < waypointLocations.length - 1 ? waypointLocations[waypointId + 1] : getShaun(finish).location;
+
+                if (waypointId < unClusteredShauns.length) {
+                    fullRouteLocations.push(unClusteredShauns[waypointId])
+                } else {
+                    // this entry in the route is a cluster - expand and solve, using revious and next points in 'parent' route as origin and destination
+                    const validClusterIndex = waypointId - unClusteredShauns.length;
+
+                    const clusterWaypoints = validClusters[validClusterIndex].map((shaunId) => getShaun(shaunId).location);
+
+                    const request = {
+                        origin: beforeLocation,
+                        destination: afterLocation,
+                        travelMode: window.google.maps.TravelMode.WALKING,
+                        waypoints: clusterWaypoints.map(waypoint => ({ location: waypoint })),
+                        optimizeWaypoints: true,
+                    };
+                    const clusterResults = await directionsService.route(request)
+                    const order = clusterResults.routes[0].waypoint_order;
+                    order.forEach((waypointIndex) => fullRouteLocations.push(clusterWaypoints[waypointIndex]));
+                }
+                beforeLocation = waypointLocations[waypointId];
+            }
+
+            fullRouteLocations.push(getShaun(finish).location);
+
+            const resultsList = [];
+
+            // now fullRouteLocations is the full expanded wayponts of the route including start and finish - needs slicing into routes
+            let segmentOrigin = fullRouteLocations.splice(0, 1)[0]
+            while (fullRouteLocations.length) {
+                const routeSegment = fullRouteLocations.splice(0, 26); // (25 plus the end-pont)
+                const segmentDestination = routeSegment.pop();
+                const request = {
+                    origin: segmentOrigin,
+                    destination: segmentDestination,
+                    travelMode: window.google.maps.TravelMode.WALKING,
+                    waypoints: routeSegment.length ? routeSegment.map(waypoint => ({ location: waypoint })) : undefined,
+                    optimizeWaypoints: false,
+                };
+                const segmentResults = await directionsService.route(request)
+                resultsList.push(segmentResults);
+                segmentOrigin = segmentDestination;
+            }
+
+            setDirectionsResponse(resultsList);
+            const totalDistance = resultsList.reduce((acc, result) => acc + computeTotalDistance(result), 0);
+            setDistance(totalDistance)
+
+        }
+
     }
 
     const onLoad = useCallback((map) => setMap(map), []);
@@ -114,7 +174,7 @@ function App() {
                         >
                             Shaun on the Tyne - Running Challenge
                         </Typography>
-                        <Typography>{distance}</Typography>
+                        {distance !== null && (<Typography>{`${(distance * 0.621371).toFixed(1)}miles`}</Typography>)}
                     </Toolbar>
                 </Container>
             </AppBar>

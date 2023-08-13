@@ -181,9 +181,6 @@ export function Controls({ calculateRoute }) {
             <Button variant="outlined" disabled onClick={() => { }}>Clear Route</Button>&nbsp;
             <Button variant="contained" disabled={false && Boolean(errors.length)} onClick={() => calculateRoute(start, finish, clusters)}>Calculate Route</Button>
         </FormRow>
-        <FormRow>
-            Route length:
-        </FormRow>
 
         <Button onClick={resetAll}>Clear form</Button>&nbsp;
 
