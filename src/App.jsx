@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react'
 // Importing some Hooks and components from google maps api which we will be using during this tutorial
 import { useJsApiLoader, GoogleMap, Marker, DirectionsRenderer, OverlayView } from '@react-google-maps/api'
 import Container from '@mui/material/Container';
-import { AppBar, IconButton, SwipeableDrawer, Toolbar, Typography } from '@mui/material';
+import { AppBar, Box, IconButton, SwipeableDrawer, Toolbar, Typography } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import { Controls } from './Controls';
 
@@ -157,16 +157,15 @@ function App() {
                         </IconButton>
                         <Typography
                             variant="h6"
-                            noWrap
+
                             component="div"
                             sx={{
                                 flexGrow: 1,
-                                display: { xs: 'none', sm: 'block' },
                             }}
                         >
                             Shaun on the Tyne - Running Challenge
                         </Typography>
-                        {distance !== null && (<Typography variant="h4">{`${(distance * 0.621371).toFixed(1)} miles`}</Typography>)}
+                        {distance !== null && (<Typography variant="h4">{`${(distance * 0.621371).toFixed(1)}`}&nbsp;miles</Typography>)}
                     </Toolbar>
                 </Container>
             </AppBar>
@@ -182,6 +181,10 @@ function App() {
             <Container style={{ padding: "0 0 0 0", maxWidth: 'initial' }}>
 
                 <div style={{ width: "calc(100vw - 0px)", height: 'calc(100vh - 64px)', margin: '64px 0 0 0' }}>
+                    <Box sx={{
+                        display: { xs: 'block', sm: 'none' },
+                        width: '100%', height: '32px', background: 'transparent'
+                    }} ></Box>
                     <GoogleMap
                         //center={center}
                         zoom={15}
