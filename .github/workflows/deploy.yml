@@ -1,0 +1,39 @@
+name: CI Deploy to Live
+
+on:
+  push:
+    branches: ['main']
+
+  workflow_dispatch:
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Build
+        run: |
+          npm ci
+          npm run build:ci
+
+      # https://github.com/falnyr/replace-env-vars-action
+      - name: Configure
+        uses: falnyr/replace-env-vars-action@v1.3.2
+        env:
+          STRAVA_CLIENT_ID: ${{ secrets.STRAVA_CLIENT_ID }}
+          STRAVA_CLIENT_SECRET: ${{ secrets.STRAVA_CLIENT_SECRET }}
+        with:
+          filename: ./dist/consts.php
+
+      # https://github.com/marketplace/actions/ftp-deploy
+      - name: Sync
+        uses: SamKirkland/FTP-Deploy-Action@4.3.1
+        with:
+          protocol: ftps
+          server: ${{ vars.FTP_SERVER }}
+          server-dir: ${{ vars.FTP_SERVER_DIR }}
+          username: ${{ vars.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: ./dist/
