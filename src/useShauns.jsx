@@ -1,12 +1,14 @@
 
 
 import { shauns } from './data/shauns';
+import { presets, defaultPreset } from './data/presets';
+
 import { useLocalStorage } from 'usehooks-ts'
 
 export function useShauns() {
-    const [start, setStart] = useLocalStorage('startingShaun', 0);
-    const [finish, setFinish] = useLocalStorage('finishingShaun', 0);
-    const [clusters, setClusters] = useLocalStorage('shaunClusters', []);
+    const [start, setStart] = useLocalStorage('startingShaun', presets[defaultPreset].data.start);
+    const [finish, setFinish] = useLocalStorage('finishingShaun', presets[defaultPreset].data.finish);
+    const [clusters, setClusters] = useLocalStorage('shaunClusters', presets[defaultPreset].data.clusters);
 
     const resetAll = () => {
         setStart(0);

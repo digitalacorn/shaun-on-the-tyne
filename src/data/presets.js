@@ -21,4 +21,21 @@ export const presets = [
       ],
     },
   },
+  {
+    name: 'Newburn loop',
+    data: {
+      start: 12,
+      finish: 12,
+      clusters: [
+        [45, 19, 39],
+        [2, 18, 28, 43, 1, 4],
+        [17, 31, 36, 48, 37, 24, 6, 13],
+        [44, 15, 38, 3, 9, 29, 23],
+        [5, 21],
+        [14, 42, 35, 22],
+      ],
+    },
+  },
 ];
+
+export const defaultPreset = 1;
