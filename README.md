@@ -2,6 +2,8 @@
 
 A tool to allow a human to assist the Google route-finding API by breaking down a large number of waypoints (more than the 25 limit) into clusters and combining the result into a single optimal route.
 
+![image](https://github.com/digitalacorn/shaun-on-the-tyne/assets/1842090/827b1426-87e8-405f-9e81-39ce31761922)
+
 ## Why?
 
 My running buddy is a nutter. He suggested we visit all of the Shaun sculptures in one day - and that because I was into orienteering
