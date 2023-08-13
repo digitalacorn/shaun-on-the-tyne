@@ -4,6 +4,8 @@ A tool to allow a human to assist the Google route-finding API by breaking down 
 
 ![image](https://github.com/digitalacorn/shaun-on-the-tyne/assets/1842090/827b1426-87e8-405f-9e81-39ce31761922)
 
+#### Demo: https://demo.digitalacorn.co.uk/shaun-on-the-tyne/
+
 ## Why?
 
 My running buddy is a nutter. He suggested we visit all of the Shaun sculptures in one day - and that because I was into orienteering
