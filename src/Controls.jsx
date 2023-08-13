@@ -35,7 +35,7 @@ const MenuProps = {
 };
 
 
-export function Controls({ calculateRoute, hasRoute, clearRoute }) {
+export function Controls({ calculateRoute, hasRoute, clearRoute, close }) {
 
     const theme = useTheme();
 
@@ -60,6 +60,7 @@ export function Controls({ calculateRoute, hasRoute, clearRoute }) {
                 console.error(err);
             }
             setCalculating(false);
+            close();
         })();
     };
 
@@ -222,6 +223,7 @@ export function Controls({ calculateRoute, hasRoute, clearRoute }) {
 }
 
 Controls.propTypes = {
+    close: PropTypes.func,
     calculateRoute: PropTypes.func,
     clearRoute: PropTypes.func,
     hasRoute: PropTypes.bool,

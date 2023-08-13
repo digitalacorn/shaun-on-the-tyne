@@ -29,6 +29,10 @@ function App() {
 
     const clusterLocations = validClusters.map((cluster => clusterCentre(cluster)));
 
+    const closeControls = () => {
+        setDrawerOpen(false);
+    }
+
     // function to calculate Route
     async function calculateRoute() {
 
@@ -172,7 +176,7 @@ function App() {
                 onClose={() => setDrawerOpen(false)}
                 onOpen={() => setDrawerOpen(true)}
             >
-                <Controls calculateRoute={calculateRoute} clearRoute={clearRoute} hasRoute={directionsResponse.length > 0} />
+                <Controls calculateRoute={calculateRoute} close={closeControls} clearRoute={clearRoute} hasRoute={directionsResponse.length > 0} />
             </SwipeableDrawer>
 
             <Container style={{ padding: "0 0 0 0", maxWidth: 'initial' }}>
