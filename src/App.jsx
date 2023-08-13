@@ -34,23 +34,10 @@ function App() {
 
         setDirectionsResponse([]);
 
-        const startShaun = getShaun(start);
-        const finishShaun = getShaun(finish);
+        const origin = getShaun(start).location;
+        const destination = getShaun(finish).location;
 
-        const origin = new window.google.maps.LatLng(
-            startShaun.lat,
-            startShaun.lng
-        );
-        const destination = new window.google.maps.LatLng(
-            finishShaun.lat,
-            finishShaun.lng
-        );
-
-
-        const waypointLocations = [...unClusteredShauns.map((shaun) => new window.google.maps.LatLng(
-            shaun.lat,
-            shaun.lng
-        )), ...clusterLocations];
+        const waypointLocations = [...unClusteredShauns.map((shaun) => shaun.location), ...clusterLocations];
 
         const request = {
             origin,
@@ -79,7 +66,7 @@ function App() {
                 const afterLocation = waypointId < waypointLocations.length - 1 ? waypointLocations[waypointId + 1] : getShaun(finish).location;
 
                 if (waypointId < unClusteredShauns.length) {
-                    fullRouteLocations.push(unClusteredShauns[waypointId])
+                    fullRouteLocations.push(unClusteredShauns[waypointId].location)
                 } else {
                     // this entry in the route is a cluster - expand and solve, using revious and next points in 'parent' route as origin and destination
                     const validClusterIndex = waypointId - unClusteredShauns.length;
@@ -135,10 +122,7 @@ function App() {
         if (map) {
             const bounds = new window.google.maps.LatLngBounds();
             shauns.map((shaun) => {
-                bounds.extend({
-                    lat: shaun.lat,
-                    lng: shaun.lng,
-                });
+                bounds.extend(shaun.location);
             });
             map.fitBounds(bounds);
         }
@@ -207,12 +191,12 @@ function App() {
 
                                 return (
                                     <Marker id={shaun.id} key={shaun.id} title={shaun.title}
-                                        position={{ lat: shaun.lat, lng: shaun.lng }}
+                                        position={shaun.location}
                                     >
                                         {
                                             <OverlayView
 
-                                                position={{ lat: shaun.lat, lng: shaun.lng }}
+                                                position={shaun.location}
                                                 mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
                                                 getPixelPositionOffset={() => ({ x: -7, y: 2 })}
 

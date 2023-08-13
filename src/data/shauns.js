@@ -513,16 +513,14 @@ const str_shauns = [
 // collapse shauns
 
 const locationKeyed = {};
-str_shauns.forEach((shaun) => {
-  const key = `${Math.floor(shaun.lat * 1000)},${Math.floor(1000 * shaun.lng)}`;
+str_shauns.forEach(({ lat, lng, ...shaun }) => {
+  const key = `${Math.floor(lat * 1000)},${Math.floor(1000 * lng)}`;
   if (locationKeyed[key]) {
     locationKeyed[key].numSeans += 1;
   } else {
     locationKeyed[key] = {
       ...shaun,
-      location: { lat: parseFloat(shaun.lat), lng: parseFloat(shaun.lng) },
-      lat: parseFloat(shaun.lat),
-      lng: parseFloat(shaun.lng),
+      location: { lat: parseFloat(lat), lng: parseFloat(lng) },
       numSeans: 1,
     };
   }
