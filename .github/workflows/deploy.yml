@@ -13,6 +13,14 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+      - name: Make envfile
+            uses: SpicyPizza/create-envfile@v2.0
+            with:
+              envkey_VITE_GOOGLE_MAPS_API: ${{ secrets.VITE_GOOGLE_MAPS_API }}
+              envkey_BASE_URL: ${{ vars.FTP_SERVER_DIR }}
+              fail_on_empty: true
+              sort_keys: false
+              
       - name: Build
         run: |
           npm ci
