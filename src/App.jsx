@@ -1,9 +1,10 @@
-import React, { useState, useEffect, useCallback } from 'react'
+import React, { useState, useEffect, useCallback, useRef } from 'react'
 // Importing some Hooks and components from google maps api which we will be using during this tutorial
 import { useJsApiLoader, GoogleMap, Marker, DirectionsRenderer, OverlayView } from '@react-google-maps/api'
 import Container from '@mui/material/Container';
 import { AppBar, Box, IconButton, SwipeableDrawer, Toolbar, Typography } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
+import MyLocationIcon from '@mui/icons-material/MyLocation';
 import { Controls } from './Controls';
 
 import { shauns } from './data/shauns';
@@ -15,9 +16,11 @@ function App() {
 
     const [map, setMap] = useState(null);
     const { start, finish, unClusteredShauns, validClusters, shaunColour, clusterColour } = useShauns();
+    const [userPos, setUserPos] = useState(null);
+    const interval = useRef(null);
 
 
-    const [isDrawerOpen, setDrawerOpen] = useState(true);
+    const [isDrawerOpen, setDrawerOpen] = useState(false);
     const [distance, setDistance] = useState(null);
     // We will be using some state variables to store the response from the google maps api
     const [directionsResponse, setDirectionsResponse] = useState([])
@@ -31,6 +34,43 @@ function App() {
 
     const closeControls = () => {
         setDrawerOpen(false);
+    }
+
+    const locate = async () => {
+        if (window.navigator.geolocation) {
+            if (interval.current) {
+                window.clearInterval(interval.current);
+                interval.current = null;
+            }
+            const calcPos = async () => {
+                return new Promise((resolve) => {
+                    window.navigator.geolocation.getCurrentPosition(
+                        (position) => {
+                            const pos = {
+                                lat: position.coords.latitude,
+                                lng: position.coords.longitude,
+                            };
+                            resolve(pos);
+                        },
+                        () => {
+                            resolve(null);
+                        },
+                    );
+                })
+            };
+            const pos = await calcPos();
+            setUserPos(pos);
+            map.setCenter(pos);
+            map.setZoom(16);
+            interval.current = window.setInterval(() => {
+                (async () => {
+                    const pos = await calcPos();
+                    setUserPos(pos);
+                    map.setCenter(pos);
+                    map.setZoom(16);
+                })();
+            }, 120000);
+        }
     }
 
     // function to calculate Route
@@ -126,6 +166,7 @@ function App() {
 
     const onLoad = useCallback((map) => setMap(map), []);
 
+
     useEffect(() => {
         if (map) {
             const bounds = new window.google.maps.LatLngBounds();
@@ -139,6 +180,15 @@ function App() {
     if (!isLoaded)
         return (<div>Loading...</div>);
 
+    const svgMarker = {
+        path: "M-1.547 12l6.563-6.609-1.406-1.406-5.156 5.203-2.063-2.109-1.406 1.406zM0 0q2.906 0 4.945 2.039t2.039 4.945q0 1.453-0.727 3.328t-1.758 3.516-2.039 3.070-1.711 2.273l-0.75 0.797q-0.281-0.328-0.75-0.867t-1.688-2.156-2.133-3.141-1.664-3.445-0.75-3.375q0-2.906 2.039-4.945t4.945-2.039z",
+        fillColor: "blue",
+        fillOpacity: 0.6,
+        strokeWeight: 0,
+        rotation: 0,
+        scale: 2,
+        anchor: new window.google.maps.Point(0, 20),
+    };
 
     return (
         <>
@@ -154,6 +204,16 @@ function App() {
                             onClick={() => setDrawerOpen(true)}
                         >
                             <MenuIcon />
+                        </IconButton>
+                        <IconButton
+                            size="large"
+                            edge="end"
+                            color="inherit"
+                            aria-label="locate"
+                            sx={{ mr: 2 }}
+                            onClick={() => locate()}
+                        >
+                            <MyLocationIcon />
                         </IconButton>
                         <Typography
                             variant="h6"
@@ -197,6 +257,7 @@ function App() {
                             fullscreenControl: false,
                         }}
                     >
+                        {userPos && <Marker id='human' key='human' position={userPos} icon={svgMarker} />}
                         {
                             shauns.map((shaun) => {
 
