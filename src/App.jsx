@@ -67,7 +67,6 @@ function App() {
                     const pos = await calcPos();
                     setUserPos(pos);
                     map.setCenter(pos);
-                    map.setZoom(16);
                 })();
             }, 120000);
         }
