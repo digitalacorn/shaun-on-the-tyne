@@ -46,8 +46,8 @@ export default function IntroDialog({ open, setOpen }) {
             <DialogContent dividers>
                 <h2>This challenge was completed on 22nd September 2023.</h2>
                 <p>Final running distance: <b>29.22miles</b>. Time: <b>6h24m</b>. ~18 Shauns collected per hour. ~4 Shauns per mile.</p>
-                <p>See the <a href="https://livetrack.garmin.com/session/a949b945-c034-43cd-b618-d9cc87f30503/token/8DEA2A85F2C72D321DF9A5325E6378" target="_blank>">Garmin live track </a></p>
-                <p>See the <a href="https://www.strava.com/activities/9899015575" target="_blank>">Strava Activity</a></p>
+                <p>See the <a href="https://livetrack.garmin.com/session/a949b945-c034-43cd-b618-d9cc87f30503/token/8DEA2A85F2C72D321DF9A5325E6378" target="_blank>">Garmin live track </a>.
+                    See the <a href="https://www.strava.com/activities/9899015575" target="_blank>">Strava Activity</a></p>
                 <h4>The challenge</h4>
                 <p>The challenge was to run and collect all 115 &ldquo;<a href="https://www.shaunonthetyne.co.uk/" target="_blank" rel="noreferrer">Shaun on the Tyne</a>&rdquo; sheep in and around Newcastle.
                     And the secondary challenge was to
