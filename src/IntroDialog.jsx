@@ -7,8 +7,8 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
-import Typography from '@mui/material/Typography';
 import { PropTypes } from "prop-types";
+import routeImg from '../public/livetrackroute.jpg'
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
     '& .MuiDialogContent-root': {
@@ -66,7 +66,7 @@ export default function IntroDialog({ open, setOpen }) {
                 </p>
                 <p>
                     <img src="https://dgtzuqphqg23d.cloudfront.net/BHAWIZesx3nVUuAkHrVK9HWbVELjePouNEds7j8bP5Q-2048x1536.jpg" style={{ maxWidth: "100%" }} />
-                    <img src="/livetrackroute.jpg" style={{ maxWidth: "100%" }} />
+                    <img src={routeImg} style={{ maxWidth: "100%" }} />
                 </p>
                 <p>
                     &copy; <a href="https://www.digitalacorn.co.uk/" target="_blank" rel="noreferrer">Peter Davies</a> 2023.
