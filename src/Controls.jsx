@@ -42,7 +42,7 @@ export function Controls({ calculateRoute, hasRoute, clearRoute, close }) {
 
     const theme = useTheme();
 
-    const { start, setStart, finish, setFinish, clusters, setClusters, resetAll, unClusteredShauns, validClusters, usedShaun, shaunColour } = useShauns();
+    const { start, setStart, finish, setFinish, clusters, setClusters, unClusteredShauns, validClusters, usedShaun, shaunColour } = useShauns();
 
 
     const handleStartChange = (event) => {

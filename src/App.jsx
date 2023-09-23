@@ -3,6 +3,7 @@ import React, { useState, useEffect, useCallback, useRef } from 'react'
 import { useJsApiLoader, GoogleMap, Marker, DirectionsRenderer, OverlayView } from '@react-google-maps/api'
 import Container from '@mui/material/Container';
 import { AppBar, Box, IconButton, SwipeableDrawer, Toolbar, Typography } from '@mui/material';
+import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import MenuIcon from '@mui/icons-material/Menu';
 import MyLocationIcon from '@mui/icons-material/MyLocation';
 import { Controls } from './Controls';
@@ -10,6 +11,7 @@ import { Controls } from './Controls';
 import { shauns } from './data/shauns';
 import { clusterCentre, computeTotalDistance, getShaun } from './helpers';
 import { useShauns } from './useShauns';
+import IntroDialog from './IntroDialog';
 
 const libraries = ['places'];
 function App() {
@@ -18,6 +20,8 @@ function App() {
     const { start, finish, unClusteredShauns, validClusters, shaunColour, clusterColour } = useShauns();
     const [userPos, setUserPos] = useState(null);
     const interval = useRef(null);
+    const [open, setOpen] = React.useState(true);
+
 
 
     const [isDrawerOpen, setDrawerOpen] = useState(false);
@@ -228,6 +232,16 @@ function App() {
                         >
                             <MyLocationIcon />
                         </IconButton>
+                        <IconButton
+                            size="large"
+                            edge="end"
+                            color="inherit"
+                            aria-label="help and info"
+                            sx={{ mr: 2 }}
+                            onClick={() => setOpen(true)}
+                        >
+                            <HelpOutlineIcon />
+                        </IconButton>
                         <Typography
                             variant="h6"
 
@@ -307,6 +321,8 @@ function App() {
                         {directionsResponse.length && directionsResponse.map((resp, i) => (<DirectionsRenderer key={i} directions={resp} />))}
                     </GoogleMap>
                 </div>
+
+                <IntroDialog open={open} setOpen={setOpen} />
 
             </Container>
         </>
