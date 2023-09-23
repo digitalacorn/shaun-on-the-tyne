@@ -153,6 +153,20 @@ function App() {
 
             setDirectionsResponse(resultsList);
             const totalDistance = resultsList.reduce((acc, result) => acc + computeTotalDistance(result), 0);
+
+            /** Eporting for GPX conversion */
+            /*
+            const points = []
+            resultsList.forEach(result => {
+                result.routes.forEach(route => {
+                    route.overview_path.forEach((pt) => {
+                        points.push({ lat: pt.lat(), lng: pt.lng() });
+                    })
+                });
+            });
+            console.log(points.map(pt => `${Number.parseFloat(pt.lat).toFixed(5)},${Number.parseFloat(pt.lng).toFixed(5)}`).join('\n'));
+
+            */
             setDistance(totalDistance)
 
         }
